@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #eef3f1;
+  --foreground: #16232b;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+/* Atmospheric field behind the hero composition */
+.hero-field {
+  background:
+    radial-gradient(ellipse 80% 60% at 12% 20%, rgba(15, 122, 114, 0.22), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 88% 10%, rgba(201, 132, 42, 0.16), transparent 50%),
+    radial-gradient(ellipse 60% 45% at 70% 85%, rgba(196, 92, 74, 0.1), transparent 55%),
+    linear-gradient(165deg, #e7f0ed 0%, #f4f1ea 48%, #e8eef5 100%);
+}
+
+.hero-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+  opacity: 0.07;
+  mix-blend-mode: multiply;
+}
+
+.hero-plane {
+  background:
+    linear-gradient(120deg, rgba(15, 122, 114, 0.35), rgba(22, 35, 43, 0.55)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900'%3E%3Crect fill='%230d3d3a' width='1600' height='900'/%3E%3Cg fill='none' stroke='%23a8d5cf' stroke-opacity='0.25'%3E%3Cpath d='M0 650 C300 520 500 780 800 620 S1300 480 1600 600'/%3E%3Cpath d='M0 700 C350 580 550 820 850 680 S1350 540 1600 660'/%3E%3Cpath d='M0 200 C400 320 700 80 1000 220 S1400 360 1600 240'/%3E%3C/g%3E%3Cg fill='%23eef3f1' fill-opacity='0.08'%3E%3Ccircle cx='220' cy='180' r='120'/%3E%3Ccircle cx='1280' cy='720' r='180'/%3E%3Ccircle cx='980' cy='220' r='70'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+}
