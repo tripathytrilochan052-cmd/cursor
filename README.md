@@ -34,19 +34,17 @@ Without a key, the deterministic rewrite engine still runs end-to-end.
 
 ## Troubleshooting
 
-**Buttons / paste / upload do nothing, Score & optimize stays disabled**
+**`Cannot find module './NNN.js'` or webpack `reading 'call'`**
 
-Client JS failed to load (often after a merge left a stale `.next` cache). Fix:
+Stale `.next` cache. Always restart clean:
 
 ```bash
-# confirm no leftover conflict markers
-grep -R "<<<<<<<" src || true
-
 rm -rf .next
-npm run dev:clean
+npm run dev
 ```
 
-Hard-refresh the browser (Cmd/Ctrl+Shift+R). The coral “Loading interactive UI…” banner should disappear once hydration works.
+(`npm run dev` now clears `.next` automatically.)
+
 
 **Score & optimize stays disabled after inputs work**
 
