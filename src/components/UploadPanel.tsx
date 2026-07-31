@@ -35,6 +35,10 @@ export function UploadPanel({
   const [dragOver, setDragOver] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
+  const openPicker = useCallback(() => {
+    inputRef.current?.click();
+  }, []);
+
   const acceptFile = useCallback(
     (next: File | null) => {
       setUploadError(null);
@@ -84,6 +88,17 @@ export function UploadPanel({
       </div>
 
       <div
+        role="button"
+        tabIndex={0}
+        aria-controls={inputId}
+        aria-label="Upload resume PDF or DOCX"
+        onClick={openPicker}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openPicker();
+          }
+        }}
         onDragOver={(e) => {
           e.preventDefault();
           setDragOver(true);
@@ -96,37 +111,33 @@ export function UploadPanel({
           acceptFile(dropped);
         }}
         className={clsx(
-          "flex flex-col items-center justify-center gap-3 border border-dashed px-6 py-10 transition duration-300",
+          "flex cursor-pointer flex-col items-center justify-center gap-3 border border-dashed px-6 py-10 transition duration-300",
           dragOver
             ? "border-teal bg-teal/10 scale-[1.01]"
             : file
               ? "border-teal/50 bg-teal/5"
-              : "border-ink/20 bg-white/50"
+              : "border-ink/20 bg-white/50 hover:border-teal/60 hover:bg-white/80"
         )}
       >
         <Upload className="h-8 w-8 text-teal" />
         <div className="text-center">
           <p className="font-medium text-ink">
-            {file ? "Resume file ready" : "Drop resume here"}
+            {file ? "Resume file ready — click to replace" : "Drop resume here or click to browse"}
           </p>
           <p className="mt-1 text-sm text-ink/55">PDF or DOCX · max 8MB</p>
         </div>
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink/90"
-        >
+        <span className="bg-ink px-4 py-2 text-sm font-semibold text-white">
           {file ? "Choose a different file" : "Choose PDF or DOCX"}
-        </button>
+        </span>
         <input
           id={inputId}
           ref={inputRef}
           type="file"
           accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           className="sr-only"
+          onClick={(e) => e.stopPropagation()}
           onChange={(e) => {
             acceptFile(e.target.files?.[0] ?? null);
-            // Allow selecting the same file again later
             e.target.value = "";
           }}
         />

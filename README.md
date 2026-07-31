@@ -13,8 +13,10 @@ AI-assisted ATS resume matcher: upload a resume (PDF/DOCX), paste a job descript
 ## Quick start
 
 ```bash
+git checkout cursor/ats-resume-matcher-c06c
+git pull
 npm install
-npm run dev
+npm run dev:clean
 ```
 
 Open [http://localhost:3000](http://localhost:3000). Use **Load sample resume + JD** to try without uploading.
@@ -22,13 +24,36 @@ Open [http://localhost:3000](http://localhost:3000). Use **Load sample resume + 
 ### Optional OpenAI polish
 
 ```bash
-export OPENAI_API_KEY=sk-...
-# optional
-export OPENAI_MODEL=gpt-4o-mini
+cp .env.example .env.local
+# set OPENAI_API_KEY=sk-...
 npm run dev
 ```
 
 Without a key, the deterministic rewrite engine still runs end-to-end.
+
+## Troubleshooting
+
+**Buttons / paste / upload do nothing, Score & optimize stays disabled**
+
+Client JS failed to load (often after a merge left a stale `.next` cache). Fix:
+
+```bash
+# confirm no leftover conflict markers
+grep -R "<<<<<<<" src || true
+
+rm -rf .next
+npm run dev:clean
+```
+
+Hard-refresh the browser (Cmd/Ctrl+Shift+R). The coral “Loading interactive UI…” banner should disappear once hydration works.
+
+**Score & optimize stays disabled after inputs work**
+
+You need *both* a resume (file or pasted text) *and* a JD in the right-hand box. The sticky bar shows what’s missing.
+
+**`.doc` uploads fail**
+
+Save as `.docx` or PDF, or paste resume text.
 
 ## API
 
