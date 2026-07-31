@@ -1,8 +1,19 @@
 import { AnalyzerApp } from "@/components/AnalyzerApp";
+import { HydrationGuard } from "@/components/HydrationGuard";
 
 export default function HomePage() {
   return (
     <main className="min-h-screen hero-field relative overflow-x-hidden">
+      <HydrationGuard />
+      <div
+        id="aligncv-boot"
+        className="fixed inset-x-0 top-0 z-[100] border-b border-coral/40 bg-coral px-4 py-3 text-center text-sm font-medium text-white"
+        role="status"
+      >
+        Interactive UI is still loading. If this message stays, stop the server and run{" "}
+        <code className="rounded bg-black/20 px-1.5 py-0.5">npm run dev:clean</code>, then
+        hard-refresh the browser.
+      </div>
       <div className="hero-grain pointer-events-none absolute inset-0" aria-hidden />
 
       {/* Full-bleed hero plane — brand-first first viewport */}
@@ -59,8 +70,8 @@ export default function HomePage() {
             },
             {
               step: "03",
-              title: "Rewrite honestly",
-              body: "Produce an ATS-optimized version that only reframes evidenced experience — never fake roles or tools.",
+              title: "Generate formatted resume",
+              body: "Produce a full ATS-formatted resume (summary, skills, experience, education) tailored to the JD — downloadable as DOCX — without inventing experience.",
             },
           ].map((item) => (
             <li key={item.step} className="border-t border-ink/15 pt-5">
