@@ -26,6 +26,8 @@ export function GeneratedResumePanel({ resume }: GeneratedResumePanelProps) {
     setBusy("docx");
     try {
       await downloadResumeDocx(resume);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "DOCX download failed.");
     } finally {
       setBusy(null);
     }
