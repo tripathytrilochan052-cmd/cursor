@@ -23,6 +23,11 @@ export function JdPanel({ value, onChange }: JdPanelProps) {
         rows={16}
         className="w-full resize-y border border-ink/15 bg-white/70 px-4 py-3 text-sm leading-relaxed text-ink outline-none transition focus:border-teal focus:ring-2 focus:ring-teal/20"
       />
+      <p className="text-xs text-ink/45">
+        {value.trim()
+          ? `${value.trim().length.toLocaleString()} characters ready`
+          : "Waiting for job description text"}
+      </p>
     </section>
   );
 }

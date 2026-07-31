@@ -2,13 +2,26 @@
 
 import clsx from "clsx";
 import { Upload, FileText, X } from "lucide-react";
-import { useCallback, useId, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 
 interface UploadPanelProps {
   file: File | null;
   resumeText: string;
   onFileChange: (file: File | null) => void;
   onResumeTextChange: (text: string) => void;
+}
+
+function isSupportedResume(file: File): boolean {
+  const lower = file.name.toLowerCase();
+  if (lower.endsWith(".pdf") || lower.endsWith(".docx")) return true;
+  if (file.type === "application/pdf") return true;
+  if (
+    file.type ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    return true;
+  }
+  return false;
 }
 
 export function UploadPanel({
@@ -18,19 +31,39 @@ export function UploadPanel({
   onResumeTextChange,
 }: UploadPanelProps) {
   const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const acceptFile = useCallback(
     (next: File | null) => {
+      setUploadError(null);
       if (!next) {
         onFileChange(null);
         return;
       }
+
       const lower = next.name.toLowerCase();
-      if (!lower.endsWith(".pdf") && !lower.endsWith(".docx")) {
-        alert("Please upload a PDF or DOCX file.");
+      if (lower.endsWith(".doc") && !lower.endsWith(".docx")) {
+        setUploadError(
+          "Old .doc files aren’t supported. Save as .docx or PDF, or paste the resume text below."
+        );
+        onFileChange(null);
         return;
       }
+
+      if (!isSupportedResume(next)) {
+        setUploadError("Please upload a PDF or DOCX file.");
+        onFileChange(null);
+        return;
+      }
+
+      if (next.size > 8 * 1024 * 1024) {
+        setUploadError("Resume file must be under 8MB.");
+        onFileChange(null);
+        return;
+      }
+
       onFileChange(next);
       onResumeTextChange("");
     },
@@ -50,8 +83,7 @@ export function UploadPanel({
         </div>
       </div>
 
-      <label
-        htmlFor={inputId}
+      <div
         onDragOver={(e) => {
           e.preventDefault();
           setDragOver(true);
@@ -64,32 +96,54 @@ export function UploadPanel({
           acceptFile(dropped);
         }}
         className={clsx(
-          "group flex cursor-pointer flex-col items-center justify-center gap-3 border border-dashed px-6 py-10 transition duration-300",
+          "flex flex-col items-center justify-center gap-3 border border-dashed px-6 py-10 transition duration-300",
           dragOver
             ? "border-teal bg-teal/10 scale-[1.01]"
-            : "border-ink/20 bg-white/50 hover:border-teal/60 hover:bg-white/80"
+            : file
+              ? "border-teal/50 bg-teal/5"
+              : "border-ink/20 bg-white/50"
         )}
       >
-        <Upload className="h-8 w-8 text-teal transition group-hover:-translate-y-0.5" />
+        <Upload className="h-8 w-8 text-teal" />
         <div className="text-center">
-          <p className="font-medium text-ink">Drop resume here</p>
+          <p className="font-medium text-ink">
+            {file ? "Resume file ready" : "Drop resume here"}
+          </p>
           <p className="mt-1 text-sm text-ink/55">PDF or DOCX · max 8MB</p>
         </div>
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink/90"
+        >
+          {file ? "Choose a different file" : "Choose PDF or DOCX"}
+        </button>
         <input
           id={inputId}
+          ref={inputRef}
           type="file"
           accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           className="sr-only"
-          onChange={(e) => acceptFile(e.target.files?.[0] ?? null)}
+          onChange={(e) => {
+            acceptFile(e.target.files?.[0] ?? null);
+            // Allow selecting the same file again later
+            e.target.value = "";
+          }}
         />
-      </label>
+      </div>
+
+      {uploadError && (
+        <p className="border border-coral/30 bg-coral/10 px-3 py-2 text-sm text-coral">
+          {uploadError}
+        </p>
+      )}
 
       {file && (
-        <div className="flex items-center justify-between gap-3 bg-white/70 px-4 py-3 text-sm animate-fade-up">
-          <div className="flex items-center gap-2 text-ink">
-            <FileText className="h-4 w-4 text-teal" />
+        <div className="flex items-center justify-between gap-3 border border-teal/30 bg-white/80 px-4 py-3 text-sm animate-fade-up">
+          <div className="flex min-w-0 items-center gap-2 text-ink">
+            <FileText className="h-4 w-4 shrink-0 text-teal" />
             <span className="truncate font-medium">{file.name}</span>
-            <span className="text-ink/45">
+            <span className="shrink-0 text-ink/45">
               ({Math.max(1, Math.round(file.size / 1024))} KB)
             </span>
           </div>
@@ -97,7 +151,10 @@ export function UploadPanel({
             type="button"
             aria-label="Remove file"
             className="rounded p-1 text-ink/50 hover:bg-ink/5 hover:text-ink"
-            onClick={() => onFileChange(null)}
+            onClick={() => {
+              onFileChange(null);
+              setUploadError(null);
+            }}
           >
             <X className="h-4 w-4" />
           </button>
@@ -112,7 +169,10 @@ export function UploadPanel({
           value={resumeText}
           onChange={(e) => {
             onResumeTextChange(e.target.value);
-            if (e.target.value.trim()) onFileChange(null);
+            if (e.target.value.trim()) {
+              onFileChange(null);
+              setUploadError(null);
+            }
           }}
           placeholder="Paste resume content if you prefer not to upload a file…"
           rows={8}
