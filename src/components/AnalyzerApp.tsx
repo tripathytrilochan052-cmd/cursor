@@ -7,6 +7,7 @@ import { JdPanel } from "@/components/JdPanel";
 import { ScoreRing } from "@/components/ScoreRing";
 import { GapAnalysisPanel } from "@/components/GapAnalysisPanel";
 import { RewritePanel } from "@/components/RewritePanel";
+import { GeneratedResumePanel } from "@/components/GeneratedResumePanel";
 import { SAMPLE_JD, SAMPLE_RESUME } from "@/lib/demo/sample";
 import type { AnalyzeResult } from "@/lib/types";
 
@@ -152,6 +153,7 @@ export function AnalyzerApp() {
           </div>
           <ScoreRing score={result.score} />
           <GapAnalysisPanel gaps={result.gaps} />
+          <GeneratedResumePanel resume={result.formattedResume} />
           <RewritePanel rewrite={result.rewrite} />
         </div>
       )}

@@ -52,7 +52,7 @@ function extractContactHeader(resumeText: string): string {
 
 function detectSummary(resumeText: string): string | null {
   const match = resumeText.match(
-    /(?:summary|profile|about|objective)\s*[:\n]\s*([\s\S]{40,500}?)(?:\n\s*\n|experience|skills|education|work history)/i
+    /(?:^|\n)\s*(?:summary|profile|about|objective)\s*[:\n]\s*([\s\S]{40,700}?)(?=\n\s*(?:experience|work experience|professional experience|skills|technical skills|education|work history)\b|\n{2,})/i
   );
   return match?.[1]?.replace(/\s+/g, " ").trim() ?? null;
 }
@@ -150,18 +150,16 @@ function buildSummary(
       : "proven experience";
 
   if (existing) {
-    // Keep original claims; lightly prepend role framing if missing
-    let summary = existing;
-    for (const skill of matched) {
-      if (!normalizeToken(summary).includes(normalizeToken(skill))) {
-        // Only add if skill is evidenced in resume
-        if (resume.skills.some((s) => s.name === skill)) {
-          summary = summary.replace(/\.$/, "");
-          summary += ` Experienced with ${skill}.`;
-        }
-      }
-    }
-    return summary;
+    // Keep original claims; lightly append missing matched skills once at the end
+    const missingMentioned = matched.filter(
+      (skill) =>
+        !normalizeToken(existing).includes(normalizeToken(skill)) &&
+        resume.skills.some((s) => s.name === skill)
+    );
+    if (!missingMentioned.length) return existing;
+    return `${existing.replace(/\.$/, "")}. Additional strengths include ${missingMentioned
+      .slice(0, 4)
+      .join(", ")}.`;
   }
 
   const skillClause = matched.length

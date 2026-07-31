@@ -8,7 +8,8 @@ AI-assisted ATS resume matcher: upload a resume (PDF/DOCX), paste a job descript
 2. **ATS match score (0–100%)** — Weighted hard skills, keywords, soft skills, experience alignment, and coverage.
 3. **Gap analysis** — Matched vs missing hard/soft skills and JD keywords, with priorities.
 4. **ATS rewrite** — Reorders skills and reframes bullets using only evidenced resume content. Missing JD skills are listed as warnings, never invented.
-5. **Optional LLM polish** — If `OPENAI_API_KEY` is set, wording is polished under the same no-hallucination rules.
+5. **Generated ATS resume** — Full single-column resume (Contact → Summary → Skills → Experience → Education) tailored to the JD, with copy / `.txt` / `.docx` download.
+6. **Optional LLM polish** — If `OPENAI_API_KEY` is set, wording is polished under the same no-hallucination rules.
 
 ## Quick start
 

@@ -70,8 +70,8 @@ export default function HomePage() {
             },
             {
               step: "03",
-              title: "Rewrite honestly",
-              body: "Produce an ATS-optimized version that only reframes evidenced experience — never fake roles or tools.",
+              title: "Generate formatted resume",
+              body: "Produce a full ATS-formatted resume (summary, skills, experience, education) tailored to the JD — downloadable as DOCX — without inventing experience.",
             },
           ].map((item) => (
             <li key={item.step} className="border-t border-ink/15 pt-5">

@@ -50,12 +50,40 @@ export interface RewriteResult {
   usedLlm: boolean;
 }
 
+export interface FormattedResumeRole {
+  title: string;
+  company: string;
+  dates: string;
+  bullets: string[];
+}
+
+export interface FormattedEducation {
+  degree: string;
+  school: string;
+  dates: string;
+  details: string[];
+}
+
+/** Full ATS-formatted resume generated from the original + JD. */
+export interface FormattedResume {
+  contactName: string;
+  contactLine: string;
+  targetRole: string | null;
+  summary: string;
+  skills: string[];
+  experience: FormattedResumeRole[];
+  education: FormattedEducation[];
+  plainText: string;
+  formatNotes: string[];
+}
+
 export interface AnalyzeResult {
   resumeText: string;
   jdText: string;
   score: ScoreBreakdown;
   gaps: GapAnalysis;
   rewrite: RewriteResult;
+  formattedResume: FormattedResume;
   parsedMeta: {
     resumeChars: number;
     jdChars: number;
